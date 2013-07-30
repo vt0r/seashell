@@ -3,6 +3,19 @@ Seashell
 
 A Bash client for the DigitalOcean API
 
-There is currently nothing here, but this README and the script(s) will be placed here soon.
+There is currently only a proof-of-concept script here, along with the LICENSE and README files.
 
-So far, the only dependency is curl (with OpenSSL or TLS support), so why not go install that while you wait? :)
+**THE CURRENT STATUS OF THE POC SCRIPT IS DISPLAY-ONLY!**
+
+It will be updated as frequently as time permits, and the next step is to incorporate actual actions such as creating/destroying droplets, etc.
+
+Since this code is currently in a pre-alpha state, please don't bother submitting pull requests, bug reports, etc. yet, as they will likely be ignored until the script becomes more useful.
+
+So far, the only non-standard dependency is curl (with OpenSSL or TLS support), so why not go install that while you wait? :)
+
+Some other essential commands that should be present on any Linux distro:
+
+* grep/egrep
+* awk
+* sed
+* tr
