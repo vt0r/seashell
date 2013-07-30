@@ -3,6 +3,8 @@ Seashell
 
 A Bash client for the DigitalOcean API
 
+Uses a nearly-unmodified version of Dominic Tarr's amazing bash-based JSON parser [JSON.sh](https://github.com/dominictarr/JSON.sh), included as a function.
+
 There is currently only a proof-of-concept script here, along with the LICENSE and README files.
 
 **THE CURRENT STATUS OF THE POC SCRIPT IS DISPLAY-ONLY!**
