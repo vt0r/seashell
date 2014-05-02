@@ -32,6 +32,8 @@ if [ -z "$APIKEY" ]; then
   exit 1
 fi
 
+API="https://api.digitalocean.com"
+
 ## BEGIN JSON.sh
 # Code stolen from https://github.com/dominictarr/JSON.sh
 JSONsh() {
@@ -191,7 +193,7 @@ JSONsh() {
 
 # Get unaltered list of droplets
 getdroplets() {
-    curl -ks "https://api.digitalocean.com/droplets/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/droplets/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parseddroplets() {
@@ -257,7 +259,7 @@ parseddroplets() {
 
 # Get available sizes for new droplets
 getsizes() {
-    curl -ks "https://api.digitalocean.com/sizes/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/sizes/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedsizes() {
@@ -295,7 +297,7 @@ parsedsizes() {
 
 # Get available sizes for new droplets
 getregions() {
-    curl -ks "https://api.digitalocean.com/regions/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/regions/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedregions() {
@@ -337,7 +339,7 @@ parsedregions() {
 
 # Get available images and their IDs
 getimages() {
-    curl -ks "https://api.digitalocean.com/images/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/images/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedimages() {
@@ -382,7 +384,7 @@ parsedimages() {
 
 # Get available SSH keys and their IDs/names
 getsshkeys() {
-    curl -ks "https://api.digitalocean.com/ssh_keys/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/ssh_keys/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 parsedsshkeys() {
     parsedout=`getsshkeys | JSONsh`
