@@ -23,16 +23,16 @@ APIKEY=""
 ## That's all for the configuration!
 
 # Let's make sure you didn't screw up the config!
-if [ -z "$CLIENTID" ]
-then
+if [ -z "$CLIENTID" ]; then
   echo "Missing Client ID. Edit $0 and adjust CLIENTID variable"
   exit 1
 fi
-if [ -z "$APIKEY" ]
-then
+if [ -z "$APIKEY" ]; then
   echo "Missing API key. Edit $0 and adjust APIKEY variable"
   exit 1
 fi
+
+API="https://api.digitalocean.com"
 
 ## BEGIN JSON.sh
 # Code stolen from https://github.com/dominictarr/JSON.sh
@@ -193,7 +193,7 @@ JSONsh() {
 
 # Get unaltered list of droplets
 getdroplets() {
-    curl -ks "https://api.digitalocean.com/droplets/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/droplets/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parseddroplets() {
@@ -201,8 +201,7 @@ parseddroplets() {
     cmdstatus=`echo "$parsedout" | head -n 1 | awk '{print $2}' | tr -d '"'`
 
     # Check for OK on request or die
-    if [ "$cmdstatus" != "OK" ]
-    then
+    if [ "$cmdstatus" != "OK" ]; then
         echo "$parsedout"
         exit 1
     fi
@@ -219,10 +218,8 @@ parseddroplets() {
 
     # Use the index given from JSONsh output to separate
     # entries into separate items, then print results
-    while [ "$count" -le "$maxcount" ]
-    do
-        for i in `echo "$parsedout" | grep "\",$count,\""`
-        do
+    while [ "$count" -le "$maxcount" ]; do
+        for i in `echo "$parsedout" | grep "\",$count,\""`; do
             ID=`echo $i | grep ',"id"'`
             NAME=`echo $i | grep ',"name"'`
             IMAGE=`echo $i | grep ',"image_id"'`
@@ -232,35 +229,26 @@ parseddroplets() {
             IP=`echo $i | grep ',"ip_address"'`
             STATUS=`echo $i | grep ',"status"'`
             CREATED=`echo $i | grep ',"created_at"'`
-            if [ -n "$ID" ]
-            then
+            if [ -n "$ID" ]; then
                 id=`echo $i | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$NAME" ]
-            then
+            elif [ -n "$NAME" ]; then
                 name=`echo "$i" | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$IMAGE" ]
-            then
+            elif [ -n "$IMAGE" ]; then
                 imageid=`echo "$i" | awk '{print $2}' | tr -d '"'`
                 image=`echo "$imageslist" | grep "Image ID: $imageid" | awk -F\- '{print $3}'`
-            elif [ -n "$SIZEID" ]
-            then
+            elif [ -n "$SIZEID" ]; then
                 sizeid=`echo "$i" | awk '{print $2}' | tr -d '"'`
                 size=`echo "$sizeslist" | grep "Size ID: $sizeid" | awk -F\- '{print $2}'`
-            elif [ -n "$REGION" ]
-            then
+            elif [ -n "$REGION" ]; then
                 regionid=`echo "$i" | awk '{print $2}' | tr -d '"'`
                 region=`echo "$regionlist" | grep "Region ID: $regionid" | awk -F\- '{print $3 " " $4 " " $5}'`
-            elif [ -n "$BACKUPS" ]
-            then
+            elif [ -n "$BACKUPS" ]; then
                 backups=`echo "$i" | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$IP" ]
-            then
+            elif [ -n "$IP" ]; then
                 ip=`echo "$i" | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$STATUS" ]
-            then
+            elif [ -n "$STATUS" ]; then
                 status=`echo "$i" | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$CREATED" ]
-            then
+            elif [ -n "$CREATED" ]; then
                 created=`echo "$i" | awk '{print $2}' | tr -d '"' | tr 'T' ' ' | sed -e 's/Z/ UTC/g'`
             fi
         done
@@ -271,7 +259,7 @@ parseddroplets() {
 
 # Get available sizes for new droplets
 getsizes() {
-    curl -ks "https://api.digitalocean.com/sizes/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/sizes/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedsizes() {
@@ -279,8 +267,7 @@ parsedsizes() {
     cmdstatus=`echo "$parsedout" | head -n 1 | awk '{print $2}' | tr -d '"'`
 
     # Check for OK on request or die
-    if [ "$cmdstatus" != "OK" ]
-    then
+    if [ "$cmdstatus" != "OK" ]; then
         echo "$parsedout"
         exit 1
     fi
@@ -294,13 +281,10 @@ parsedsizes() {
 
     # Use the index given from JSONsh output to separate
     # entries into separate items, then print id/name
-    while [ "$count" -le "$maxcount" ]
-    do
-        for i in `echo "$parsedout" | grep "\",$count,\""`
-        do
+    while [ "$count" -le "$maxcount" ]; do
+        for i in `echo "$parsedout" | grep "\",$count,\""`; do
             ID=`echo $i | grep ',"id"'`
-            if [ -n "$ID" ]
-            then
+            if [ -n "$ID" ]; then
                 id=`echo $i | awk '{print $2}' | tr -d '"'`
             else
                 size=`echo "$i" | awk '{print $2}' | tr -d '"'`
@@ -313,7 +297,7 @@ parsedsizes() {
 
 # Get available sizes for new droplets
 getregions() {
-    curl -ks "https://api.digitalocean.com/regions/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/regions/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedregions() {
@@ -321,8 +305,7 @@ parsedregions() {
     cmdstatus=`echo "$parsedout" | head -n 1 | awk '{print $2}' | tr -d '"'`
 
     # Check for OK on request or die
-    if [ "$cmdstatus" != "OK" ]
-    then
+    if [ "$cmdstatus" != "OK" ]; then
         echo "$parsedout"
         exit 1
     fi
@@ -336,21 +319,16 @@ parsedregions() {
 
     # Use the index given from JSONsh output to separate
     # entries into separate items, then print results
-    while [ "$count" -le "$maxcount" ]
-    do
-        for i in `echo "$parsedout" | grep "\",$count,\""`
-        do
+    while [ "$count" -le "$maxcount" ]; do
+        for i in `echo "$parsedout" | grep "\",$count,\""`; do
             ID=`echo $i | grep ',"id"'`
             NAME=`echo $i | grep ',"name"'`
             SLUG=`echo $i | grep ',"slug"'`
-            if [ -n "$ID" ]
-            then
+            if [ -n "$ID" ]; then
                 id=`echo $i | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$NAME" ]
-            then
+            elif [ -n "$NAME" ]; then
                 name=`echo "$i" | awk -F\" '{print $6}' | tr -d '"'`
-            elif [ -n "$SLUG" ]
-            then
+            elif [ -n "$SLUG" ]; then
                 slug=`echo "$i" | awk '{print $2}' | tr -d '"'`
             fi
         done
@@ -361,7 +339,7 @@ parsedregions() {
 
 # Get available images and their IDs
 getimages() {
-    curl -ks "https://api.digitalocean.com/images/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/images/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 # Let's get the same list, but make it easy to read
 parsedimages() {
@@ -369,8 +347,7 @@ parsedimages() {
     cmdstatus=`echo "$parsedout" | head -n 1 | awk '{print $2}' | tr -d '"'`
 
     # Check for OK on request or die
-    if [ "$cmdstatus" != "OK" ]
-    then
+    if [ "$cmdstatus" != "OK" ]; then
         echo "$parsedout"
         exit 1
     fi
@@ -384,25 +361,19 @@ parsedimages() {
 
     # Use the index given from JSONsh output to separate
     # entries into separate items, then print results
-    while [ "$count" -le "$maxcount" ]
-    do
-        for i in `echo "$parsedout" | grep "\",$count,\""`
-        do
+    while [ "$count" -le "$maxcount" ]; do
+        for i in `echo "$parsedout" | grep "\",$count,\""`; do
             ID=`echo $i | grep ',"id"'`
             NAME=`echo $i | grep ',"name"'`
             SLUG=`echo $i | grep ',"slug"'`
             DISTRO=`echo $i | grep ',"distribution"'`
-            if [ -n "$ID" ]
-            then
+            if [ -n "$ID" ]; then
                 id=`echo $i | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$NAME" ]
-            then
+            elif [ -n "$NAME" ]; then
                 name=`echo "$i" | awk -F\" '{print $6}' | tr -d '"'`
-            elif [ -n "$SLUG" ]
-            then
+            elif [ -n "$SLUG" ]; then
                 slug=`echo "$i" | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$DISTRO" ]
-            then
+            elif [ -n "$DISTRO" ]; then
                 distro=`echo "$i" | awk -F\" '{print $6}' | tr -d '"'`
             fi
         done
@@ -413,15 +384,14 @@ parsedimages() {
 
 # Get available SSH keys and their IDs/names
 getsshkeys() {
-    curl -ks "https://api.digitalocean.com/ssh_keys/?client_id=$CLIENTID&api_key=$APIKEY"
+    curl -ks "$API/ssh_keys/?client_id=$CLIENTID&api_key=$APIKEY"
 }
 parsedsshkeys() {
     parsedout=`getsshkeys | JSONsh`
     cmdstatus=`echo "$parsedout" | head -n 1 | awk '{print $2}' | tr -d '"'`
 
     # Check for OK on request or die
-    if [ "$cmdstatus" != "OK" ]
-    then
+    if [ "$cmdstatus" != "OK" ]; then
         echo "$parsedout"
         exit 1
     fi
@@ -435,17 +405,13 @@ parsedsshkeys() {
 
     # Use the index given from JSONsh output to separate
     # entries into separate items, then print results
-    while [ "$count" -le "$maxcount" ]
-    do
-        for i in `echo "$parsedout" | grep "\",$count,\""`
-        do
+    while [ "$count" -le "$maxcount" ]; do
+        for i in `echo "$parsedout" | grep "\",$count,\""`; do
             ID=`echo $i | grep ',"id"'`
             NAME=`echo $i | grep ',"name"'`
-            if [ -n "$ID" ]
-            then
+            if [ -n "$ID" ]; then
                 id=`echo $i | awk '{print $2}' | tr -d '"'`
-            elif [ -n "$NAME" ]
-            then
+            elif [ -n "$NAME" ]; then
                 name=`echo "$i" | awk -F\" '{print $6}' | tr -d '"'`
             fi
         done
